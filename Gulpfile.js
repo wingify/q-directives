@@ -1,9 +1,11 @@
+'use strict';
+
 var gulp = require('gulp');
 var concat = require('gulp-concat');
 var wrap = require('gulp-wrap');
-var http = require('http');
 var spawn = require('child_process').spawn;
 var q = require('q');
+var jshint = require('gulp-jshint');
 
 gulp.task('build', function() {
 	return gulp.src(['src/module.js', 'src/**/*.js'])
@@ -41,7 +43,7 @@ gulp.task('test', ['build-test'], function () {
         str += data;
     });
 
-    testem.on('close', function (code) {
+    testem.on('close', function () {
         if (str.indexOf('not ok') >= 0) {
             d.reject('testem not ok');
         } else {
@@ -50,3 +52,16 @@ gulp.task('test', ['build-test'], function () {
     });
     return d.promise;
 });
+
+gulp.task('jshint', function () {
+    return gulp.src([
+        'Gulpfile.js',
+        'src/*.js',
+        'src/**/*.js',
+        'test/unit/**/*.js'
+    ])
+        .pipe(jshint())
+        .pipe(jshint.reporter('default'));
+});
+
+gulp.task('default', ['jshint', 'test']);

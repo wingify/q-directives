@@ -1,17 +1,22 @@
 (function() {
-var module = angular.module('q-directives', [], ['$controllerProvider', '$provide', '$compileProvider', '$filterProvider', function ($controllerProvider, $provide, $compileProvider, $filterProvider) {
-	module.controller = angular.bind(this, $controllerProvider.register);
-	module.factory = angular.bind(this, $provide.factory);
-	module.service = angular.bind(this, $provide.service);
-	module.constant = angular.bind(this, $provide.constant);
-	module.value = angular.bind(this, $provide.value);
-	module.directive = angular.bind(this, $compileProvider.directive);
-	module.filter = angular.bind(this, $filterProvider.register);
-}]);
+'use strict';
 
-module.qDirective = function qDirective(name, directive) {
-	module.uninitializedQDirectives = module.uninitializedQDirectives || [];
-	module.uninitializedQDirectives.push({name: name, directive: directive});
+var _module = angular.module('q-directives', [], [
+	'$controllerProvider', '$provide', '$compileProvider', '$filterProvider',
+	function ($controllerProvider, $provide, $compileProvider, $filterProvider) {
+		_module.controller = angular.bind(this, $controllerProvider.register);
+		_module.factory = angular.bind(this, $provide.factory);
+		_module.service = angular.bind(this, $provide.service);
+		_module.constant = angular.bind(this, $provide.constant);
+		_module.value = angular.bind(this, $provide.value);
+		_module.directive = angular.bind(this, $compileProvider.directive);
+		_module.filter = angular.bind(this, $filterProvider.register);
+	}
+]);
+
+_module.qDirective = function qDirective(name, directive) {
+	_module.uninitializedQDirectives = _module.uninitializedQDirectives || [];
+	_module.uninitializedQDirectives.push({name: name, directive: directive});
 
 	return this;
 };
@@ -326,29 +331,37 @@ angular.module('q-directives')
 (function() {
 'use strict';
 
+function qWatchDirective(watchFnName, deepWatch) {
+	return ['$injector', function ($injector) {
+		return {
+			restrict: 'A',
+			update: function (scope, getValue) {
+				return {
+					scope: scope,
+					getValue: getValue
+				};
+			},
+			render: function qWatch(element, data) {
+				// get using injector, otherwise a cyclic dependency issue is caused
+				var qUpdate = $injector.get('qUpdate');
+				if (element.hasAttribute('q-watched')) { return; }
+
+				element.setAttribute('q-watched', '');
+				data.scope[watchFnName](data.getValue, function () {
+					qUpdate(element, data.scope);
+				}, deepWatch);
+			}
+		};
+	}];
+}
+
 angular.module('q-directives')
 
-.qDirective('q-watch', ['$injector', function ($injector) {
-	return {
-		restrict: 'A',
-		update: function (scope, getValue) {
-			return {
-				scope: scope,
-				getValue: getValue
-			};
-		},
-		render: function qWatch(element, data) {
-			// get using injector, otherwise a cyclic dependency issue is caused
-			var qUpdate = $injector.get('qUpdate');
-			if (element.hasAttribute('q-watched')) { return; }
+.qDirective('q-watch', qWatchDirective('$watch'))
+.qDirective('q-watch-deep', qWatchDirective('$watch', true))
+.qDirective('q-watch-collection', qWatchDirective('$watchCollection'))
+.qDirective('q-watch-group', qWatchDirective('$watchGroup'));
 
-			element.setAttribute('q-watched', '');
-			data.scope.$watch(data.getValue, function () {
-				qUpdate(element, data.scope);
-			});
-		}
-	};
-}]);
 })();
 (function() {
 'use strict';
@@ -462,6 +475,8 @@ angular.module('q-directives')
 
 })();
 (function() {
+'use strict';
+
 angular.module('q-directives')
 
 .factory('eventDelegator', ['$rootScope', function ($rootScope) {
@@ -887,11 +902,11 @@ angular.module('q-directives')
 'use strict';
 
 var qDirectives,
-	module = angular.module('q-directives');
+	_module = angular.module('q-directives');
 
-module.factory('qDirectives', ['$injector', function ($injector) {
+_module.factory('qDirectives', ['$injector', function ($injector) {
 	qDirectives = [];
-	module.qDirective = function qDirective(name, directive) {
+	_module.qDirective = function qDirective(name, directive) {
 		if (typeof directive === 'function' ||
 			(angular.isArray(directive) && typeof directive[directive.length - 1] === 'function')) {
 			qDirectives.push(angular.extend($injector.invoke(directive), {name: name}));
@@ -911,9 +926,9 @@ module.factory('qDirectives', ['$injector', function ($injector) {
 		});
 	};
 
-	for (var i = module.uninitializedQDirectives.length; i--;) {
-		var d = module.uninitializedQDirectives[i];
-		module.qDirective(d.name, d.directive);
+	for (var i = _module.uninitializedQDirectives.length; i--;) {
+		var d = _module.uninitializedQDirectives[i];
+		_module.qDirective(d.name, d.directive);
 	}
 
 	return qDirectives;

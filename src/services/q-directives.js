@@ -1,11 +1,11 @@
 'use strict';
 
 var qDirectives,
-	module = angular.module('q-directives');
+	_module = angular.module('q-directives');
 
-module.factory('qDirectives', ['$injector', function ($injector) {
+_module.factory('qDirectives', ['$injector', function ($injector) {
 	qDirectives = [];
-	module.qDirective = function qDirective(name, directive) {
+	_module.qDirective = function qDirective(name, directive) {
 		if (typeof directive === 'function' ||
 			(angular.isArray(directive) && typeof directive[directive.length - 1] === 'function')) {
 			qDirectives.push(angular.extend($injector.invoke(directive), {name: name}));
@@ -25,9 +25,9 @@ module.factory('qDirectives', ['$injector', function ($injector) {
 		});
 	};
 
-	for (var i = module.uninitializedQDirectives.length; i--;) {
-		var d = module.uninitializedQDirectives[i];
-		module.qDirective(d.name, d.directive);
+	for (var i = _module.uninitializedQDirectives.length; i--;) {
+		var d = _module.uninitializedQDirectives[i];
+		_module.qDirective(d.name, d.directive);
 	}
 
 	return qDirectives;

@@ -1,3 +1,5 @@
+'use strict';
+
 angular.module('q-directives')
 
 .factory('eventDelegator', ['$rootScope', function ($rootScope) {
