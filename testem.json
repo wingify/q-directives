@@ -1,0 +1,4 @@
+{
+	"test_page": "test/unit/index.html",
+	"launch_in_ci": ["Chrome"]
+}

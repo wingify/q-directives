@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+<head>
+<title>Q-Directive Unit Tests</title>
+<link rel="stylesheet" href="/bower_components/lib/jasmine-core/jasmine.css">
+<!-- TODO: Including jQuery for click(). Remove later. Use protractor maybe. -->
+</head>
+<body>
+
+<script src="/test/q-directives.spec.js"></script>
+<script>
+var jasmineEnv = jasmine.getEnv();
+jasmineEnv.updateInterval = 1000;
+
+var reporter = new jasmine.HtmlReporter();
+jasmineEnv.addReporter(reporter);
+jasmineEnv.specFilter = function (spec) {
+	return reporter.specFilter(spec);
+};
+
+jasmineEnv.execute();
+</script>
+<script src="/testem.js"></script>
+
+</body>
+</html>
