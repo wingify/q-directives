@@ -46,20 +46,25 @@ In the above example, there are 4 `q-text` directives. However there is only one
 
 ## Setting Up
 
-### Installation
+### Installation (via Bower)
 
-* To install all the dependencies run `npm install` and `bower install`.
+* Just run `bower install q-directives --save`
+
+### Direct Download
+
+* Download [dist/q-directives.js](https://github.com/wingify/q-directives/blob/master/dist/q-directives.js) and include it in your project and you're good to go!
+
+### Old School Git Clone
+
+* Clone the repository on the local system and `cd` to it.
+* Run `bower install` and `npm install` to install all dependencies.
 * Install gulp globally by running `npm install -g gulp`.
 * To build `dist/q-directives.js`, type `gulp build`.
-
-### Downloads
-
-* [dist/q-directives.js](https://github.com/wingify/q-directives/blob/master/dist/q-directives.js)
 
 ### Running Tests
 
 * To run tests in the console, run `gulp test` (from the root directory of the repository)
-* To run tests in the browser, run `gulp build-test; testem server`. To see the final outputs open http://localhost:7357/ in the browser, open the JavaScript console and look for the `final_results` array.
+* To run tests in the browser, run `gulp build-test; testem server`.
 
 ## Documentation
 
@@ -72,4 +77,3 @@ See [CONTRIBUTING.md](https://github.com/wingify/q-directives/blob/master/CONTRI
 ## License
 
 See [LICENSE.md](https://github.com/wingify/q-directives/blob/master/LICENSE.md)
-
