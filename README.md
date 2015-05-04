@@ -2,11 +2,11 @@
 
 ## Introduction
 
-Performance matters. An Angular.js developer would know that several watchers in a an Angular.js digest cycle can often be a bottleneck, and while there are workarounds to performance optimize an application by reducing the number of watchers, `q-directives` take the approach to a whole new level. By using a directive system called q (quick) that runs separate from the native one, it exponentially reduces the number of watchers in your application.
+Performance matters. An Angular.js developer would know that several watchers in a digest cycle can often be a bottleneck, and while there are workarounds to performance optimize an application by reducing the number of watchers, q-directives take the approach to a whole new level. By using a directive system called q **(where q = quick)** that runs separate from the native one, it exponentially reduces the number of watchers in your application.
 
 ### Compromises for Performance
 
-In order to achieve performance, one must make compromises. `q-directives` **(q = quick)** exposes a brand new directive system takes an approach that make several compromises on features provided by the native directive system. That is a fair barter, because `#PerfMatters`. The major one is that `q-directives` does away with watchers. That's right:
+In order to achieve performance, one must make compromises. q-directives exposes a brand new directive system takes an approach that make several compromises on features provided by the native directive system. That is a fair barter, because `#PerfMatters`. The major one is that `q-directives` does away with watchers. That's right:
 
 **Adding a q-directive in your app like q-show, q-hide or q-text adds zero watchers to your Angular.js application.**
 
@@ -34,6 +34,8 @@ function MyCtrl($scope) {
 }
 ```
 
+The basic idea is separation of concerns at the core. Only the `q-watch` directive listens for changes, and updates all other directives when it detects a change. Other directives do not add any watchers whatsoever.
+
 In the above example, there are 4 `q-text` directives. However there is only one watcher reegistered (by `q-watch`). Whenever the reference to `user` changes, all the q-directives inside that DOM element get updated at the same time. You might wonder how is this approach more performant than native angular directives. Long story short, after performance testing over many samples, it comes out to be faster because of the following reasons:
 
 * Updating several nodes in one go triggers a single paint cycle after the execution stack completes.
@@ -54,7 +56,6 @@ In the above example, there are 4 `q-text` directives. However there is only one
 
 * [dist/q-directives.js](https://github.com/wingify/q-directives/blob/master/dist/q-directives.js)
 
-
 ### Running Tests
 
 * To run tests in the console, run `gulp test` (from the root directory of the repository)
@@ -63,4 +64,12 @@ In the above example, there are 4 `q-text` directives. However there is only one
 ## Documentation
 
 A general usage documentation and reference manual can be found on http://engineering.wingify.com/q-directives/
+
+## Contributing
+
+See [CONTRIBUTING.md](https://github.com/wingify/q-directives/blob/master/CONTRIBUTING.md)
+
+## License
+
+See [LICENSE.md](https://github.com/wingify/q-directives/blob/master/LICENSE.md)
 
