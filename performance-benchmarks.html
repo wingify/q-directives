@@ -1,0 +1,37 @@
+<script src="js/script.js"></script><script>navigateHome()</script>
+
+## Performance Benchmarks
+
+Below stats are a rendition of the Chrome (version 37) timeline for the following use case:
+
+A table containing 216 rows repeated by q-repeat. Each row has about 10 columns containing about 50+ Angular directives each (Original). The optimized version has those Angular directives replaced with q-directives, and ng-repeat is replaced by q-repeat.
+
+Data is collected over 5 samples for both Original and Optimized situations.
+
+### Initial table render
+
+#### Original
+
+<a href="images/1.png" target="_blank">![graph](images/1.png)</a>
+
+#### Optimized
+
+<a href="images/2.png" target="_blank">![graph](images/2.png)</a>
+
+#### Optimized (+ disabling ngAnimate)
+
+<a href="images/3.png" target="_blank">![graph](images/3.png)</a>
+
+### Sorting the table
+
+#### Original
+
+<a href="images/4.png" target="_blank">![graph](images/4.png)</a>
+
+#### Optimized
+
+<a href="images/5.png" target="_blank">![graph](images/5.png)</a>
+
+<hr>
+
+More benchmarks coming soon...
