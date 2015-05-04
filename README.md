@@ -6,7 +6,7 @@ Performance matters. An Angular.js developer would know that several watchers in
 
 ### Compromises for Performance
 
-In order to achieve performance, one must make compromises. `q-directives` **(q = quick)** exposes a brand new directive system takes an approach that make several compromises on features provided by the native directive system. The major one is that `q-directives` does away watchers. That's right:
+In order to achieve performance, one must make compromises. `q-directives` **(q = quick)** exposes a brand new directive system takes an approach that make several compromises on features provided by the native directive system. That is a fair barter, because `#PerfMatters`. The major one is that `q-directives` does away with watchers. That's right:
 
 **Adding a q-directive in your app like q-show, q-hide or q-text adds zero watchers to your Angular.js application.**
 
