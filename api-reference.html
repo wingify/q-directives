@@ -1,61 +1,183 @@
 <script src="js/script.js"></script><script>navigateHome()</script>
 
-## API Reference
+## API Reference (Directives)
 
-Coming soon...
+### q
 
-<!--
+`q` is an Angular native directive that acts as a bridge between Angular's directive system and the q-directive system.
 
-### Directives
+Look at the example below:
 
-#### q
+```html
+<!-- This will work -->
+<div q q-watch="user">
+	Hello <strong q-text="user.name"></strong>
+</div>
 
-#### q-attr
+<!-- This won't -->
+<div q-watch="user">
+	Hello <strong q-text="user.name"></strong>
+</div>
+```
 
-#### q-class
+Notice how the presence of the `q` directive makes all the difference.
 
-#### q-click
+### q-watch
 
-#### q-mouseover
+`q-watch` listens on the scope for the value provided in the attribute. It only uses a shallow `$watch` and triggers a `qUpdate` on the element only if the reference to the value changes.
 
-#### q-mouseout
+For example, whenever `user.name` changes below, the strong text will get updated with the latest `user.name`:
 
-#### q-html
+```html
+<div q q-watch="user.name">
+	Hello <strong q-text="user.name"></strong>
+<div>
+```
 
-#### q-repeat
+### q-watch-deep
 
-#### q-style
+`q-watch` adds a deep watch on the scope for the value provided in the attribute, that not only checks for the same reference but also for deep object equality. It triggers a `qUpdate` on the element if anything in the object changes.
 
-#### q-text
+For example, in the below example, if anything on the user changes, all the q-directives on the element and the descendants get updated at the same time.
 
-#### q-show
+```html
+<div q q-watch-deep="user">
+	Hello there,
+	<strong q-text="user.fullName"></strong>!
+	Your registered username is <strong q-text="user.username"></strong>, and email is <span q-text="user.email"></span>.
+	You have liked <em q-text="user.likedPosts"></em> posts.
+</div>
+```
 
-#### q-hide
+### q-watch-collection
 
-#### q-watch
+`q-watch-collection` is like `q-watch`, but adds a `$watchCollection` listener instead.
 
-#### q-watch-deep
+### q-watch-group
 
-#### q-watch-collection
+`q-watch-group` is like `q-watch`, but adds a `$watchGroup` listener instead.
 
-#### q-watch-group
+### q-attr
 
-#### q-compile
+`q-attr` updates the attributes on the element it is added on whenever `qUpdate` is called on the element.
+
+```html
+<div q q-watch="user">
+	<img q-attr="{src: user.imageUrl, alt: user.name}"> <span q-text="user.name"></span>
+</div>
+```
+
+### q-class
+
+`q-attr` behaves pretty much like `ng-class`. It updates the classes on the element based on whether the values are truthy or falsy.
+
+```html
+<div q q-watch="user">
+	<img q-class="{banned: user.banned, admin: user.admin}"> <span q-text="user.name"></span>
+</div>
+```
+
+### q-click
+
+Not very different from `ng-click`. It uses an event delegation mechanism to add a click event listener on the element. It is compatible with other q-directives, where angular directives might not be.
+
+### q-mouseover
+
+Pretty much like `ng-mouseover`. It uses an event delegation mechanism to add a mouseover event listener on the element.
+
+### q-mouseout
+
+Pretty much like `ng-mouseout`. It uses an event delegation mechanism to add a mouseover event listener on the element.
+
+### q-html
+
+A q-directive equivalent of `ng-bind-html`. Unlike `ng-bind-html`, q-html does not expect a `$sce` safe value.
+
+```js
+function Ctrl($scope) {
+	$scope.html = "You have a very <em class='highlight'>bright</em> future.";
+}
+```
+
+```html
+<div q q-watch="html">
+	Hi User, <span q-html="html"></span>
+</div>
+```
+
+### q-repeat
+
+`q-repeat` is a much faster version of `ng-repeat`. It adds a `$watchCollection` on the list provided in the attribute value and whenever it changes, it updates the list using a very performant method. It only supports the `item in collection` syntax, and does not support other descriptors like `track by`. Also it only supports iteration on arrays, and not on objects.
+
+```html
+<ul q>
+	<li q-repeat="task in tasks">
+		<div q-show="task.completed">[completed]</div>
+		<div q-text="task.name"></div>
+	</li>
+</ul>
+```
+
+### q-style
+
+`q-style` is the q-directive version of `ng-style`.
+
+```html
+<!-- view -->
+<div ng-controller="Ctrl">
+	<span q q-watch="display" q-style="{display: display}">this is displayed</span>
+</div>
+```
+
+```javascript
+// controller
+function Ctrl($scope) {
+	$scope.display = 'none';
+}
+```
+
+### q-text
+
+`q-text` is a replacement for native interpolation directive (double braces).
+
+```html
+<div q q-watch="user.name">
+	Hi <span q-text="user.name"></span>
+</div>
+```
+
+### q-show
+
+`q-show` shows an element if the condition provided in the attribute is true. Works in the same way as `ng-show`.
+
+### q-hide
+
+`q-hide` shows an element if the condition provided in the attribute is true. Works in the same way as `ng-hide`.
+
+### q-compile
+
+`q-compile` is not a q-directive, but is a native Angular directive. Under the hood, it is basically a high priority terminal directive that pauses the compilation of Angular directives on the element it is added on, compiles the q-directives, and resumes the compilation of Angular directives by calling `$compile`.
+
+Here's an example:
+
+```html
+<!-- The ng-if in the below example won't work as expected -->
+<ul q>
+	<li q-repeat="task in tasks">
+		<div ng-if="task.completed">[completed]</div>
+		<div q-text="task.name"></div>
+	</li>
+</ul>
+
+<!-- This will, however, work perfectly fine: -->
+<ul q>
+	<li q-repeat="task in tasks">
+		<div q-compile ng-if="task.completed">[completed]</div>
+		<div q-text="task.name"></div>
+	</li>
+</ul>
+```
+
+Notice how the presence of the `q-compile` directive made all the difference.
 
 <hr>
-
-### Services
-
-#### qCompile
-
-#### qUpdate
-
-#### qDirectives
-
-#### eventDelegator
-
-#### BatchQueue
-
-#### PlaceholderContainer
-
--->
