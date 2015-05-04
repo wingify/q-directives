@@ -66,6 +66,42 @@ In the above example, there are 4 `q-text` directives. However there is only one
 * To run tests in the console, run `gulp test` (from the root directory of the repository)
 * To run tests in the browser, run `gulp build-test; testem server`.
 
+## Performance Benchmarks
+
+Below stats are a rendition of the Chrome (version 37) timeline for the following use case:
+
+A table containing 216 rows repeated by `q-repeat`. Each row has about 10 columns containing about 50+ Angular directives each (Original). The optimized version has those Angular directives replaced with q-directives, and ng-repeat is replaced by q-repeat.
+
+Data is collected over 5 samples for both Original and Optimized situations.
+
+### Initial table render
+
+#### Original
+
+<a href="http://engineering.wingify.com/q-directives/images/1.png" target="_blank">![graph](http://engineering.wingify.com/q-directives/images/1.png)</a>
+
+#### Optimized
+
+<a href="http://engineering.wingify.com/q-directives/images/2.png" target="_blank">![graph](http://engineering.wingify.com/q-directives/images/2.png)</a>
+
+#### Optimized (+ disabling ngAnimate)
+
+<a href="http://engineering.wingify.com/q-directives/images/3.png" target="_blank">![graph](http://engineering.wingify.com/q-directives/images/3.png)</a>
+
+### Sorting the table
+
+#### Original
+
+<a href="http://engineering.wingify.com/q-directives/images/4.png" target="_blank">![graph](http://engineering.wingify.com/q-directives/images/4.png)</a>
+
+#### Optimized
+
+<a href="http://engineering.wingify.com/q-directives/images/5.png" target="_blank">![graph](http://engineering.wingify.com/q-directives/images/5.png)</a>
+
+<hr>
+
+More benchmarks coming soon...
+
 ## Documentation
 
 A general usage documentation and reference manual can be found on http://engineering.wingify.com/q-directives/
