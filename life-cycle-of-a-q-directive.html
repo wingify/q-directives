@@ -1,0 +1,30 @@
+<script src="js/script.js"></script><script>navigateHome()</script>
+
+## Life Cycle of a Q-Directive
+
+### Angular directives - compile and link
+
+An Angular developer might know the life cycle of a native Angular directive. Simply put, `$compile` is where all the magic begins. It is this service that breathes life into the simple custom attributes that exist in the DOM. A native directive has two phases:
+
+1. Compile
+2. Link
+
+When `$compile` is called on an element, it traverses the DOM tree of the element down up to its last descendants and adds behaviour to the directives as described in its directive registration system. It includes using `$parse` to parse any attribute values, executing any pre-defined templates, or executing any custom behaviour defined by the directive at the time of its registration.
+
+When the compilation is done, the second part is to link the directive with a `$scope` object. This is where the bindings happen. For the simplest directives like the interpolation directive (double braces like `{{hello}}`), Angular watches the content in the braces on the given `$scope` object, and whever it changes, it updates the DOM.
+
+### Q-Directives - compile, update and render
+
+Q-Directives take a different approach. Like `$compile`, q-directives are compiled by using a special service called `qCompile`. However, this service is no rocket science. It adds special classes to the elements with q-directives on them. This is done for performance benefits of `getElementsByClassName` over other alternatives like `querySelectorAll`. It also compiles any template defined in the directive definition.
+
+Unlike Angular directives, in scenarios like `ng-repeat`, the compliation need not happen for each repetition. Once an element is q-compiled, it need not be compiled again, even if it is cloned. The state of a q-compiled element exists in the element itself.
+
+So unlike an Angular directive, a q-directive has three phases:
+
+1. Compile
+2. Update
+3. Render
+
+The first phase is handled by the `qCompile` service. Whenever a watch directive like `q-watch` detects a change in the model, it calls `qUpdate(element)`. `qUpdate` is a service that calls the `update` function on each directive in the element and its descendants. That is where any model related logic on the directive exists. The `update` function of each directive is provided with the current scope and the value of the directive's attribute (if it is an attribute directive). After the update is complete, `render` is called on each directive, and the return value of the `update` function (or scope, if no return value was given) is passed to it.
+
+The linking has purposefully been broken down into `update` and `render`, so that the model logic can stay separate from the view logic.

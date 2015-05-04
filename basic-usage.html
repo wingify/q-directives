@@ -1,0 +1,88 @@
+<script src="js/script.js"></script><script>navigateHome()</script>
+
+## Basic Usage
+
+Explaining q-directives briefly is hard, and to keep things simple, let us break it down into four parts:
+
+1. The `q` directive.
+2. DOM manipulating q-directives like `q-show`, `q-hide`, `q-text`, `q-html`.
+3. Q-directives that add watchers like `q-watch`, `q-watch-deep`, `q-watch-collection` and `q-watch-group`.
+4. The `q-compile` directive.
+
+### The q directive
+
+As mentioned before, q-directives are **not** native Angular directives. They do not register with the Angular directive system, but instead follow their own registration system. But the `q` directive is an exception. `q` is an Angular native directive that acts as a bridge between Angular's directive system and the q-directive system.
+
+Look at the example below:
+
+
+```html
+<!-- This will work -->
+<div q q-watch="user">
+	Hello <strong q-text="user.name"></strong>
+</div>
+
+<!-- This won't -->
+<div q-watch="user">
+	Hello <strong q-text="user.name"></strong>
+</div>
+```
+
+Notice how the presence of the `q` directive makes all the difference.
+
+### DOM maniplating directives
+
+DOM manipulating directives are pretty simple. They (you guessed it) manipulate DOM in some or other way. They work pretty similar to angular directives, with the exception that they don't add any watchers. Here's an example that uses the `q-attr` directive to show the gravatar image for a user:
+
+```html
+<div q q-watch="user">
+	<img q-attr="{src: user.imageUrl, alt: user.name}"> <span q-text="user.name"></span>
+</div>
+```
+
+### Watch directives
+
+DOM manipulating q-directives don't add watchers. That part is delegated to a special watcher directives. Adding a `q-watch` directive on a node adds a watcher on the current scope for the value assigned to the `q-watch` attribute. Whenever that value changes, the directive triggers an update on the element, which updates all the DOM manipulating directives on that element and its descendants. And yes, this operation is performance optimized, and is an O(n) operation, where n = the number of directives you have on the element and its descendants.
+
+To reference the example from the introduction:
+
+```html
+<div ng-controller="MyCtrl">
+	<div q q-watch-deep="user">
+		Hello there,
+		<strong q-text="user.fullName"></strong>!
+		Your registered username is <strong q-text="user.username"></strong>, and email is <span q-text="user.email"></span>.
+		You have liked <em q-text="user.likedPosts"></em> posts.
+	</div>
+</div>
+```
+
+There are 4 `q-text` directives here. However there is only one watcher reegistered (by `q-watch`). Whenever anything in `user` changes (ensured by the `q-watch-deep` directive), all the q-directives inside that DOM element get updated at the same time.
+
+### Compile directive
+
+Well, one shortcoming of `q-directives` is that if you use them, you cannot use native Angular directives along with it. You may, but they will probably not work as expected. The `q-compile` directive comes in handy in that case. `q-compile` is not a q-directive, but is a native Angular directive. Since q-directive compilation and native Angular directives compilation works differently and at different times (Angular directives are compiled before q-directives are), adding a `q-compile` directive alongside your Angular directive is like telling Angular, "hey, hold your horses, let q-directives compile first, and then you may do your stuff".
+
+Under the hood, it is basically a high priority terminal directive that pauses the compilation of Angular directives on the element it is added on, compiles the q-directives, and resumes the compilation of Angular directives by calling `$compile`.
+
+Here's an example:
+
+```html
+<!-- The ng-if in the below example won't work as expected -->
+<ul q>
+	<li q-repeat="task in tasks">
+		<div ng-if="task.completed">[completed]</div>
+		<div q-text="task.name"></div>
+	</li>
+</ul>
+
+<!-- This will, however, work perfectly fine: -->
+<ul q>
+	<li q-repeat="task in tasks">
+		<div q-compile ng-if="task.completed">[completed]</div>
+		<div q-text="task.name"></div>
+	</li>
+</ul>
+```
+
+Notice how the presence of the `q-compile` directive made all the difference.
