@@ -1,0 +1,93 @@
+<script src="js/script.js"></script><script>navigateHome()</script>
+
+## Writing Custom Q-Directives
+
+Writing a custom q-directive is as easy as writing a native Angular.js directive. There are a few minor differences and lack of features though. Consider the simplest directive `q-style`. Below is the source code for the directive:
+
+```js
+angular.module('q-directives')
+
+.qDirective('q-style', {
+	restrict: 'A',
+	update: function (scope, getValue) {
+		return getValue(scope);
+	},
+	render: function qStyle(element, value) {
+		angular.element(element).css(value);
+	}
+});
+```
+
+That's it! Below are the three takeaways from the code above:
+
+1. `q-style` is an attribute directive (indicated by `restrict: 'A'`).
+2. The `update` function calls the value getter on scope provided and returns it. (More on this later.)
+3. The `render` function is called with the `element` and the return value of the `update` function.
+
+That's a brief introduction. Below is a reference of all the properties you can use to define a directive:
+
+### restrict: string
+
+This property can have either of two values. `A` indicates an attribute directive and `E` indicates an element directives. A directive cannot be registered as both an attribute and an element directive.
+
+### priority: number
+
+Certain directives might need to be executed before others. For creating directives that must execute before all others, indicate a higher number as the `priority`. The directive with the highest `priority` gets executed first. If no `priority` is defined, it is assumed to be `0`. To make a directive execute after all others, define a negative `priority`.
+
+### template: string|element
+
+The template string applies only to element directives (`restrict: 'E'`). Element directives can choose to replace the current element with the template's markup. This attribute can either be a string containing a template or a template DOM element.
+
+### terminal: boolean
+
+If a q-directive is marked as a terminal, it is implicity assumed to have the highest priority. Not only that, all other directives present on that element and its descendants do not compile. This is slightly different from Angular's approach to terminal directives, where only the directives on the current node do not compile, and directives on descedant nodes remain unaffected.
+
+### compile: function (element)
+
+Whenever `qCompile` is called on an element, `compile` is called for each directive after `qCompile` is done with its work. This is where you might want to place some DOM pre-processing logic (something that does not depend on scopes, like adding certain classes or removing some attributes).
+
+### update: function (scope, getValue)
+
+When `qUpdate` is called on a qCompiled node, `update` is called for each directive. The `update` function is given `scope` as the first parameter. For attribute directives (`restrict: 'A'`), a second parameter called `getValue` is also provided, which when called with `scope` as the parameter, evaluates the attribute value on scope.
+
+Considering the q-style example:
+
+```js
+// directive
+angular.module('q-directives')
+
+.qDirective('q-style', {
+	restrict: 'A',
+	update: function (scope, getValue) {
+		var value = getValue(scope)
+		console.log(value);
+		return value;
+	},
+	render: function qStyle(element, value) {
+		angular.element(element).css(value);
+	}
+});
+```
+
+```html
+<!-- view -->
+<div ng-controller="Ctrl">
+	<span q q-watch="display" q-style="{display: display}">this is displayed</span>
+</div>
+```
+
+```controller
+function Ctrl($scope) {
+	$scope.display = 'none';
+}
+```
+
+The `console.log` statement above is going to log `none`, because `getValue` actually holds `$parse('{display: display}')`.
+
+(therefore, `getValue(scope) === $parse('{display: display}')(scope)`).
+
+### render: function (element, value)
+
+Finally, after `qUpdate` calls `update` for each directive, it calls `render` on the directive with two parameters: `element` and the `value`. Whatever is returned by `update` will be passed as `value` (second parameter) to the `render` function. If nothing is returned by the `update` function, or if it is omitted, `scope` is passed as a second parameter to `render` instead.
+
+If you omit the `update` function, `render` acts like the `link` function in native angular directives, where the parameters given to it are the `element` and the `scope`. However to encourage separation of concerns, it is recommended to have any model logic inside `update` and return the final value.
