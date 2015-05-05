@@ -1,13 +1,12 @@
 {
   "name": "q-directives",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "authors": [
     "Himanshu Kapoor <himanshu.kapoor@wingify.com>"
   ],
-  "description": "q-directives for Angular.js",
-  "main": "q-directives.js",
+  "description": "A faster directive system for Angular.js",
+  "main": "dist/q-directives.js",
   "license": "MIT",
-  "private": true,
   "ignore": [
     "**/.*",
     "node_modules",
