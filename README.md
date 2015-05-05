@@ -48,7 +48,7 @@ In the above example, there are 4 `q-text` directives. However there is only one
 
 ### Installation (via Bower)
 
-* Just run `bower install q-directives --save`
+* Just run `bower install angular-q-directives --save`
 
 ### Direct Download
 
